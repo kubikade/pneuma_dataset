@@ -7,13 +7,22 @@ class Vehicle:
         self.avg_speed = avg_speed
         self.datas_list = datas_list
 
-    def toString(self):
-        ret = "[" + self.track_id + "; " + self.type + "; " + self.traveled_distance + "; " + self.avg_speed + "; "
-        lenght = len(self.datas_list)
-        for x in range(lenght):
-            ret += (self.datas_list[x].toString()) + "; "
-        ret += "]"
+    def __str__(self):
+        ret = "Vehicle{" + self.track_id + "; " + self.type + "; " + self.traveled_distance + "; " + self.avg_speed + "; "
+        length = len(self.datas_list)
+        for x in range(length):
+            ret += (str(self.datas_list[x])) + "; "
+        ret += "}"
         return ret
+
+    def __repr__(self):
+        ret = "{" + self.track_id + "; " + self.type + "; " + self.traveled_distance + "; " + self.avg_speed + "; "
+        length = len(self.datas_list)
+        for x in range(length):
+            ret += (repr(self.datas_list[x])) + "; "
+        ret += "}"
+        return ret
+
 
     def findMinMaxLat(self):
         maxLat = self.datas_list[0].lat
@@ -73,6 +82,9 @@ class Veh_data:
         self.lat_accel = lat_accel
         self.time = time
 
-    def toString(self):
+    def __str__(self):
+        return "Data[" + self.lat + ", " + self.lon + ", " + self.speed + ", " + self.tan_accel + ", " + self.lat_accel + ", " + self.time + "]"
+
+    def __repr__(self):
         return "[" + self.lat + ", " + self.lon + ", " + self.speed + ", " + self.tan_accel + ", " + self.lat_accel + ", " + self.time + "]"
 
