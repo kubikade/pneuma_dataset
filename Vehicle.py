@@ -73,7 +73,7 @@ class Vehicle:
         return maxLon
 
 
-class Veh_data:
+class VehData:
     def __init__(self, lat, lon, speed, tan_accel, lat_accel, time):
         self.lat = lat
         self.lon = lon
