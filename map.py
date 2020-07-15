@@ -1,8 +1,9 @@
 import gmplot
 import reader
 
-
-vehicle = reader.load_one_row("pneuma_sample_dataset/pneuma_sample_dataset.csv", 324, 25)
+granularity = 25
+carnumber = 26
+vehicle = reader.load_one_row("pneuma_sample_dataset/pneuma_sample_dataset.csv", carnumber+1, granularity)
 print(vehicle)
 
 lons = []
@@ -16,10 +17,7 @@ for i in range(len(vehicle.datas_list)):
     lats.append(float(vehicle.datas_list[i].lat))
 
 gmap = gmplot.GoogleMapPlotter(centerLat, centerLon, 17)
-
 gmap.scatter(lats, lons, '#00FF00', size=3, marker=False)
 gmap.plot(lats, lons, 'blue', edge_width=2.5)
-
-# Pass the absolute path
 gmap.draw("map.html")
 

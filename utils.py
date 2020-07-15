@@ -3,7 +3,7 @@ from math import sin, cos, sqrt, atan2, radians
 
 def get_distance(datas_list, x):
         # approximate radius of earth in km
-        R = 6373.0
+        R = 6378.0
         index = x-1 if x-1 > -1 else 0
         lat1 = radians(float(datas_list[index].lat))
         lon1 = radians(float(datas_list[index].lon))
