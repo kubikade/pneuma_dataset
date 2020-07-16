@@ -13,6 +13,7 @@ def load_multiple_rows(filepath, nrows, granularity=1):
     with open(filepath, 'r') as file:
         reader = csv.reader(file, delimiter=";")
         vehicles = []
+        next(reader)
         for i in range(nrows):
             row = []
             temporary = next(reader)

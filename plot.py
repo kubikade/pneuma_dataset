@@ -2,94 +2,89 @@ import utils
 import reader
 import matplotlib.pyplot as plt
 import numpy as np
+import matplotlib
 from matplotlib.collections import LineCollection
+
+
+def loadLists(vehicle):
+    timeList = []
+    distanceList = []
+    speedList = []
+    for i in range(len(vehicle.datas_list)):
+        time = vehicle.datas_list[i].time
+        sep = "."
+        rest = time.split(sep, 1)[0]
+        rest = (float(rest) / 1000)
+        timeList.append(rest)
+        j = 0
+        dist = 0.0
+        while j <= i:
+            dist += utils.get_distance(vehicle.datas_list, j)
+            j += 1
+        distanceList.append(dist)
+        speed = vehicle.datas_list[i].speed
+        speedList.append(float(speed))
+    return timeList, distanceList, speedList
+
+
+def get_segments(timeList, distanceList, speedList):
+    x = np.array(timeList)
+    y = np.array(distanceList)
+    # dydx = np.diff(y) / np.diff(x) * 3.6
+    dydx = np.array(speedList)
+    points = np.array([timeList, distanceList]).T.reshape(-1, 1, 2)
+    segments = np.concatenate([points[:-1], points[1:]], axis=1)
+    return segments
 
 
 filepath = "pneuma_sample_dataset/pneuma_sample_dataset.csv"
 granularity = 5
-carnumber = 25
-carnumber2 = 26
-veh1 = reader.load_one_row(filepath, carnumber+1, granularity)
-print(veh1)
+carnumbers = [14, 15]
+vehicles = []
 
-timeList = []
-distanceList = []
-speedList = []
+for i in carnumbers:
+    vehicle = reader.load_one_row(filepath, i+1, granularity)
+    vehicles.append(vehicle)
+    print(vehicle)
 
-for i in range(len(veh1.datas_list)):
-    time = veh1.datas_list[i].time
-    #timeList.append(time)
-    sep = "."
-    rest = time.split(sep, 1)[0]
-    rest = (float(rest) / 1000)
-    timeList.append(rest)
-    j = 0
-    dist = 0.0
-    while j <= i:
-        dist += utils.get_distance(veh1.datas_list, j)
-        j += 1
-    distanceList.append(dist)
-    speed = veh1.datas_list[i].speed
-    speedList.append(float(speed))
 
-veh2 = reader.load_one_row(filepath, carnumber2+1, granularity)
-print(veh2)
+fig, ax = plt.subplots()
 
-timeList2 = []
-distanceList2 = []
-speedList2 = []
+lists = loadLists(vehicles[0])
+mindist = min(lists[1])
+maxdist = max(lists[1])
+mintime = min(lists[0])
+maxtime = max(lists[0])
+minspeed = min(lists[2])
+maxspeed = max(lists[2])
 
-for i in range(len(veh2.datas_list)):
-    time = veh2.datas_list[i].time
-    #timeList.append(time)
-    sep = "."
-    rest = time.split(sep, 1)[0]
-    rest = (float(rest) / 1000)
-    timeList2.append(rest)
-    j = 0
-    dist = 0.0
-    while j <= i:
-        dist += utils.get_distance(veh2.datas_list, j)
-        j += 1
-    distanceList2.append(dist)
-    speed = veh2.datas_list[i].speed
-    speedList2.append(float(speed))
+for vehicle in vehicles:
+    lists = loadLists(vehicle)
+    minspeed = min(lists[2]) if min(lists[2]) < minspeed else minspeed
+    maxspeed = max(lists[2]) if max(lists[2]) > maxspeed else maxspeed
+    mindist = min(lists[1]) if min(lists[1]) < mindist else mindist
+    maxdist = max(lists[1]) if max(lists[1]) > maxdist else maxdist
+    mintime = min(lists[0]) if min(lists[0]) < mintime else mintime
+    maxtime = max(lists[0]) if max(lists[0]) > maxtime else maxtime
 
-x = np.array(timeList)
-y = np.array(distanceList)
-#dydx = np.diff(y) / np.diff(x) * 3.6
-dydx = np.array(speedList)
-points = np.array([timeList, distanceList]).T.reshape(-1, 1, 2)
-segments = np.concatenate([points[:-1], points[1:]], axis=1)
+norm = plt.Normalize(minspeed, maxspeed)
+cmap = 'coolwarm'
+lines = []
 
-x2 = np.array(timeList2)
-y2 = np.array(distanceList2)
-#dydx = np.diff(y) / np.diff(x) * 3.6
-dydx2 = np.array(speedList2)
-points2 = np.array([timeList2, distanceList2]).T.reshape(-1, 1, 2)
-segments2 = np.concatenate([points2[:-1], points2[1:]], axis=1)
+for vehicle in vehicles:
+    lists = loadLists(vehicle)
+    seg = get_segments(*lists)
+    lc = LineCollection(seg, cmap=cmap, norm=norm)
+    lc.set_array(np.array(lists[2]))
+    lc.set_linewidth(2)
+    line = ax.add_collection(lc)
 
-fig = plt.subplot()
-norm = plt.Normalize(min(dydx), max(dydx))
-lc = LineCollection(segments, cmap='coolwarm', norm=norm)
-# RdYlGn
-lc.set_array(dydx)
-lc.set_linewidth(2)
-line = fig.add_collection(lc)
-plt.colorbar(line, label="velocity [km/h]")
-
-lc2 = LineCollection(segments2, cmap='coolwarm', norm=norm)
-lc2.set_array(dydx2)
-lc2.set_linewidth(2)
-line2 = fig.add_collection(lc2)
-
-plt.title("car no." + str(carnumber))
+plt.colorbar(matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), label="velocity [km/h]")
+plt.title("car no." + str(carnumbers))
 plt.ylabel("distance [m]")
 plt.xlabel("time [s]")
 plt.grid()
-fig.set_xlim(0, max(x))
-fig.set_ylim(min(y), max(y))
+ax.set_xlim(mintime, maxtime)
+ax.set_ylim(mindist, maxdist)
 plt.show()
-
-
 
