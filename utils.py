@@ -19,8 +19,8 @@ def get_distance(datas_list, x):
 
 # x == lat, y == lon
 def is_in_BBox(x, y, Bxmin, Bxmax, Bymin, Bymax):
-    if Bxmin <= x <= Bxmax:
-        if Bymin <= y <= Bymax:
+    if Bxmin <= float(x) <= Bxmax:
+        if Bymin <= float(y) <= Bymax:
             return True
         else:
             return False

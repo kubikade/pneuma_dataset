@@ -28,10 +28,6 @@ def loadLists(vehicle):
 
 
 def get_segments(timeList, distanceList, speedList):
-    x = np.array(timeList)
-    y = np.array(distanceList)
-    # dydx = np.diff(y) / np.diff(x) * 3.6
-    dydx = np.array(speedList)
     points = np.array([timeList, distanceList]).T.reshape(-1, 1, 2)
     segments = np.concatenate([points[:-1], points[1:]], axis=1)
     return segments
@@ -39,14 +35,11 @@ def get_segments(timeList, distanceList, speedList):
 
 filepath = "pneuma_sample_dataset/pneuma_sample_dataset.csv"
 granularity = 5
-carnumbers = [14, 15]
 vehicles = []
+numbers = " "
+BBox = [37.99013, 37.99112, 23.73382, 23.73413]
 
-for i in carnumbers:
-    vehicle = reader.load_one_row(filepath, i+1, granularity)
-    vehicles.append(vehicle)
-    print(vehicle)
-
+vehicles = reader.load_rows_in_interval(filepath, 1, 2478, 25)
 
 fig, ax = plt.subplots()
 
@@ -59,28 +52,33 @@ minspeed = min(lists[2])
 maxspeed = max(lists[2])
 
 for vehicle in vehicles:
-    lists = loadLists(vehicle)
-    minspeed = min(lists[2]) if min(lists[2]) < minspeed else minspeed
-    maxspeed = max(lists[2]) if max(lists[2]) > maxspeed else maxspeed
-    mindist = min(lists[1]) if min(lists[1]) < mindist else mindist
-    maxdist = max(lists[1]) if max(lists[1]) > maxdist else maxdist
-    mintime = min(lists[0]) if min(lists[0]) < mintime else mintime
-    maxtime = max(lists[0]) if max(lists[0]) > maxtime else maxtime
+    if utils.is_in_BBox(vehicle.datas_list[0].lat, vehicle.datas_list[0].lon, *BBox):
+        print(vehicle)
+        numbers += vehicle.track_id + ", "
+        lists = loadLists(vehicle)
+        minspeed = min(lists[2]) if min(lists[2]) < minspeed else minspeed
+        maxspeed = max(lists[2]) if max(lists[2]) > maxspeed else maxspeed
+        mindist = min(lists[1]) if min(lists[1]) < mindist else mindist
+        maxdist = max(lists[1]) if max(lists[1]) > maxdist else maxdist
+        mintime = min(lists[0]) if min(lists[0]) < mintime else mintime
+        maxtime = max(lists[0]) if max(lists[0]) > maxtime else maxtime
 
 norm = plt.Normalize(minspeed, maxspeed)
 cmap = 'coolwarm'
 lines = []
 
+
 for vehicle in vehicles:
-    lists = loadLists(vehicle)
-    seg = get_segments(*lists)
-    lc = LineCollection(seg, cmap=cmap, norm=norm)
-    lc.set_array(np.array(lists[2]))
-    lc.set_linewidth(2)
-    line = ax.add_collection(lc)
+    if utils.is_in_BBox(vehicle.datas_list[0].lat, vehicle.datas_list[0].lon, *BBox):
+        lists = loadLists(vehicle)
+        seg = get_segments(*lists)
+        lc = LineCollection(seg, cmap=cmap, norm=norm)
+        lc.set_array(np.array(lists[2]))
+        lc.set_linewidth(2)
+        line = ax.add_collection(lc)
 
 plt.colorbar(matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), label="velocity [km/h]")
-plt.title("car no." + str(carnumbers))
+plt.title("car no." + str(numbers))
 plt.ylabel("distance [m]")
 plt.xlabel("time [s]")
 plt.grid()
