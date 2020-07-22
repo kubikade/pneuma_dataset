@@ -34,27 +34,33 @@ def get_segments(timeList, distanceList, speedList):
 
 
 filepath = "pneuma_sample_dataset/pneuma_sample_dataset.csv"
-granularity = 5
+granularity = 25
 vehicles = []
 numbers = " "
-BBox = [37.99013, 37.99112, 23.73382, 23.73413]
+BBox = [37.98948, 37.99054, 23.73059, 23.73113]
+#2478 max index
 
-vehicles = reader.load_rows_in_interval(filepath, 1, 2478, 25)
+vehicles = reader.load_rows_in_interval(filepath, 1750, 1860, granularity)
 
 fig, ax = plt.subplots()
 
-lists = loadLists(vehicles[0])
-mindist = min(lists[1])
-maxdist = max(lists[1])
-mintime = min(lists[0])
-maxtime = max(lists[0])
-minspeed = min(lists[2])
-maxspeed = max(lists[2])
+#lists = loadLists(vehicles[0])
+
+for vehicle in vehicles:
+    if utils.is_in_BBox(vehicle.datas_list[0].lat, vehicle.datas_list[0].lon, *BBox):
+        lists = loadLists(vehicle)
+        mindist = min(lists[1])
+        maxdist = max(lists[1])
+        mintime = min(lists[0])
+        maxtime = max(lists[0])
+        minspeed = min(lists[2])
+        maxspeed = max(lists[2])
+        break
 
 for vehicle in vehicles:
     if utils.is_in_BBox(vehicle.datas_list[0].lat, vehicle.datas_list[0].lon, *BBox):
         print(vehicle)
-        numbers += vehicle.track_id + ", "
+        #numbers += vehicle.track_id + ", "
         lists = loadLists(vehicle)
         minspeed = min(lists[2]) if min(lists[2]) < minspeed else minspeed
         maxspeed = max(lists[2]) if max(lists[2]) > maxspeed else maxspeed
@@ -75,13 +81,15 @@ for vehicle in vehicles:
         lc = LineCollection(seg, cmap=cmap, norm=norm)
         lc.set_array(np.array(lists[2]))
         lc.set_linewidth(2)
+        lc.set_label(vehicle.track_id + " " + vehicle.type)
         line = ax.add_collection(lc)
 
 plt.colorbar(matplotlib.cm.ScalarMappable(norm=norm, cmap=cmap), label="velocity [km/h]")
-plt.title("car no." + str(numbers))
+#plt.title("car no." + str(numbers))
 plt.ylabel("distance [m]")
 plt.xlabel("time [s]")
 plt.grid()
+plt.legend(loc="upper left")
 ax.set_xlim(mintime, maxtime)
 ax.set_ylim(mindist, maxdist)
 plt.show()
