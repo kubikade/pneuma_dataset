@@ -83,8 +83,8 @@ class VehData:
         self.time = time
 
     def __str__(self):
-        return "Data[" + self.lat + ", " + self.lon + ", " + self.speed + ", " + self.tan_accel + ", " + self.lat_accel + ", " + self.time + "]"
+        return "Data[lat: " + self.lat + ", lon: " + self.lon + ", speed: " + self.speed + ", tan_acc: " + self.tan_accel + ", lat_acc: " + self.lat_accel + ", time: " + self.time + "]"
 
     def __repr__(self):
-        return "[" + self.lat + ", " + self.lon + ", " + self.speed + ", " + self.tan_accel + ", " + self.lat_accel + ", " + self.time + "]"
+        return "[lat: " + self.lat + ", lon: " + self.lon + ", speed: " + self.speed + ", tan_acc: " + self.tan_accel + ", lat_acc: " + self.lat_accel + ", time: " + self.time + "]"
 
