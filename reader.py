@@ -20,7 +20,7 @@ def load_multiple_rows(filepath, nrows, granularity=1):
             for val in temporary:
                 val = val.replace(" ", "")
                 row.append(val)
-            vehicle = Vehicle.Vehicle(*get_Vehicle_info(filepath, i, row), get_VehData(filepath, i, row, granularity))
+            vehicle = Vehicle.Vehicle(*get_Vehicle_info(row), *get_VehData(row, granularity))
             vehicles.append(vehicle)
         return vehicles
 
@@ -35,7 +35,7 @@ def load_one_row(filepath, rowIndex, granularity=1):
         for val in temporary:
             val = val.replace(" ", "")
             line.append(val)
-    vehicle = Vehicle.Vehicle(*get_Vehicle_info(filepath, rowIndex, line), get_VehData(filepath, rowIndex, line, granularity))
+    vehicle = Vehicle.Vehicle(*get_Vehicle_info(line), *get_VehData(line, granularity))
     return vehicle
 
 
@@ -51,20 +51,23 @@ def load_rows_in_interval(filepath, fromIndex, toIndex, granularity=1):
             for val in temporary:
                 val = val.replace(" ", "")
                 row.append(val)
-            vehicle = Vehicle.Vehicle(*get_Vehicle_info(filepath, i, row), get_VehData(filepath, i, row, granularity))
+            vehicle = Vehicle.Vehicle(*get_Vehicle_info(row), *get_VehData(row, granularity))
             vehicles.append(vehicle)
         return vehicles
 
 
 # returns list of first 4 parameters for Vehicle object
-def get_Vehicle_info(filepath, rowIndex, line):
+def get_Vehicle_info(line):
     ret = []
     for i in range(4):
         ret.append(line[i])
     return ret
 
+
+"""
 # returns fifth parameter for Vehicle object - list of VehData
-def get_VehData(filepath, rowIndex, line, granularity=1):
+OLD FUNCTION
+def get_VehData(line, granularity=1):
     ret = []
     data = []
     i = 4
@@ -79,14 +82,30 @@ def get_VehData(filepath, rowIndex, line, granularity=1):
         data = []
         i += 6 * (granularity - 1)
     return ret
+"""
 
 
-"""path = "pneuma_sample_dataset/pneuma_sample_dataset.csv"
-vehicles_list = load_rows_in_interval(path, 0, 2, 1)
-for veh in vehicles_list:
-    print(veh)
+def get_VehData(line, granuality=1):
+    lat_list = []
+    lon_list = []
+    speed_list = []
+    tan_accel_list = []
+    lat_accel_list = []
+    time_list = []
+    offset = i = 4
+    while i < len(line)-1:
+        lat_list.append(float(line[i]))
+        lon_list.append(float(line[i+1]))
+        speed_list.append(float(line[i+2]))
+        tan_accel_list.append(float(line[i+3]))
+        lat_accel_list.append(float(line[i+4]))
+        time_list.append(float(line[i+5])/1000)
+        i += (6 * granuality)
+    return lat_list, lon_list, speed_list, tan_accel_list, lat_accel_list, time_list
+
+
     
-path = "pneuma_sample_dataset/pneuma_sample_dataset.csv"
+"""path = "pneuma_sample_dataset/pneuma_sample_dataset.csv"
 vehicles = load_multiple_rows(path, get_number_of_rows(path))
 
 
