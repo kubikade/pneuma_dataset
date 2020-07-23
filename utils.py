@@ -26,3 +26,21 @@ def is_in_BBox(x, y, Bxmin, Bxmax, Bymin, Bymax):
             return False
     else:
         return False
+
+
+def depart_from_BBox(vehicles, Bxmin, Bxmax, Bymin, Bymax):
+    departing = []
+    for vehicle in vehicles:
+        if is_in_BBox(vehicle.datas_list[0].lat, vehicle.datas_list[0].lon, Bxmin, Bxmax, Bymin, Bymax):
+            departing.append(vehicle)
+    return departing
+
+
+def pass_through_BBox(vehicles, Bxmin, Bxmax, Bymin, Bymax):
+    passing = []
+    for vehicle in vehicles:
+        for i in range(len(vehicle.datas_list)):
+            if is_in_BBox(vehicle.datas_list[i].lat, vehicle.datas_list[i].lon, Bxmin, Bxmax, Bymin, Bymax):
+                passing.append(vehicle)
+                break
+    return passing
