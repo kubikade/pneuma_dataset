@@ -3,7 +3,7 @@ import pandas as pd
 import reader
 
 # DataFrame column names, track_id will serve as index, not as column name
-DF_COLUMN_NAMES = ['type_id', 'traveled_distance', 'avg_speed', 'repeated_data']
+DF_COLUMN_NAMES = ['type_id', 'traveled_distance', 'avg_speed', 'lat', 'lon', 'speed', 'tan_acc', 'lat_acc', 'time']
 
 
 def gen_df_entry_of_vehicle(veh):
@@ -19,7 +19,12 @@ def gen_df_entry_of_vehicle(veh):
     veh_dict = {DF_COLUMN_NAMES[0]: veh.type,
                 DF_COLUMN_NAMES[1]: veh.traveled_distance,
                 DF_COLUMN_NAMES[2]: veh.avg_speed,
-                DF_COLUMN_NAMES[3]: veh.datas_list
+                DF_COLUMN_NAMES[3]: veh.lat_list,
+                DF_COLUMN_NAMES[4]: veh.lon_list,
+                DF_COLUMN_NAMES[5]: veh.speed_list,
+                DF_COLUMN_NAMES[6]: veh.tan_accel_list,
+                DF_COLUMN_NAMES[7]: veh.lat_accel_list,
+                DF_COLUMN_NAMES[8]: veh.time_list
                 }
     return veh.track_id, veh_dict
 
@@ -54,5 +59,5 @@ if __name__ == '__main__':
 
     # how to access the data of single entry
     print('---')
-    print(df.iloc[0]['repeated_data'][1])
+    print(df.iloc[0]['lon'][1])
 

@@ -59,7 +59,8 @@ def load_rows_in_interval(filepath, fromIndex, toIndex, granularity=1):
 # returns list of first 4 parameters for Vehicle object
 def get_Vehicle_info(line):
     ret = []
-    for i in range(4):
+    number_of_info = 4
+    for i in range(number_of_info):
         ret.append(line[i])
     return ret
 
@@ -93,6 +94,7 @@ def get_VehData(line, granuality=1):
     lat_accel_list = []
     time_list = []
     offset = i = 4
+    number_of_data = 6
     while i < len(line)-1:
         lat_list.append(float(line[i]))
         lon_list.append(float(line[i+1]))
@@ -100,8 +102,11 @@ def get_VehData(line, granuality=1):
         tan_accel_list.append(float(line[i+3]))
         lat_accel_list.append(float(line[i+4]))
         time_list.append(float(line[i+5])/1000)
-        i += (6 * granuality)
-    return lat_list, lon_list, speed_list, tan_accel_list, lat_accel_list, time_list
+        i += (number_of_data * granuality)
+    if len(lat_list) == len(lon_list) == len(speed_list) == len(tan_accel_list) == len(lat_accel_list) == len(time_list):
+        return lat_list, lon_list, speed_list, tan_accel_list, lat_accel_list, time_list
+    else:
+        return None
 
 
     
