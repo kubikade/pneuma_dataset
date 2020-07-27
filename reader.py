@@ -66,27 +66,6 @@ def get_Vehicle_info(line):
     return ret
 
 
-"""
-# returns fifth parameter for Vehicle object - list of VehData
-OLD FUNCTION
-def get_VehData(line, granularity=1):
-    ret = []
-    data = []
-    i = 4
-    counter = 0
-    while i < len(line)-1:
-        while counter < 6:
-            data.append(line[i])
-            i += 1
-            counter += 1
-        counter = 0
-        ret.append(Vehicle.VehData(*data))
-        data = []
-        i += 6 * (granularity - 1)
-    return ret
-"""
-
-
 def get_VehData(line, granuality=1):
     lat_list = []
     lon_list = []
@@ -108,24 +87,3 @@ def get_VehData(line, granuality=1):
         return lat_list, lon_list, speed_list, tan_accel_list, lat_accel_list, time_list
     else:
         return None
-
-
-    
-"""path = "pneuma_sample_dataset/pneuma_sample_dataset.csv"
-vehicles = load_multiple_rows(path, get_number_of_rows(path))
-
-
-minLat = vehicles[1].findMinLat()
-maxLat = vehicles[1].findMaxLat()
-minLon = vehicles[1].findMinLon()
-maxLon = vehicles[1].findMaxLon()
-
-for x in range(len(vehicles)-1):
-    minLat = vehicles[x+1].findMinLat() if vehicles[x+1].findMinLat() < minLat else minLat
-    maxLat = vehicles[x+1].findMaxLat() if vehicles[x+1].findMaxLat() > maxLat else maxLat
-    minLon = vehicles[x+1].findMinLon() if vehicles[x+1].findMinLon() < minLon else minLon
-    maxLon = vehicles[x+1].findMaxLon() if vehicles[x+1].findMaxLon() > maxLon else maxLon
-    #if x == 0:
-        #print(minLat, maxLat, minLon, maxLon)
-    #print(vehicles[x].toString())
-print("minMAX lat, lon: " + minLat, maxLat, minLon, maxLon)"""
