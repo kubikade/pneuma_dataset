@@ -1,6 +1,9 @@
 import pandas as pd
-
+from shapely import wkt
+from shapely.geometry import Point
 import reader
+from geopandas import GeoDataFrame
+import geopandas
 
 # DataFrame column names, track_id will serve as index, not as column name
 DF_COLUMN_NAMES = ['type_id', 'traveled_distance', 'avg_speed', 'lat', 'lon', 'speed', 'tan_acc', 'lat_acc', 'time']
@@ -47,11 +50,22 @@ def create_df(loaded_vehicles):
     return df
 
 
+def to_gdf(df):
+    gdf = GeoDataFrame(
+        df, geometry=geopandas.points_from_xy(df.iloc[0]['lon'], df.iloc[0]['lat']))
+    return gdf
+
+
 if __name__ == '__main__':
     filepath = "pneuma_sample_dataset/pneuma_sample_dataset_4_entries.csv"
-    loaded_vehicles = reader.load_multiple_rows(filepath, 4)
+    loaded_vehicles = reader.load_multiple_rows(filepath, 1)
     df = create_df(loaded_vehicles)
     print(df)
+    print(len(df))
+
+    print('---------')
+    gdf = to_gdf(df)
+    print(gdf)
 
     # how to access single entry:
     print('---')

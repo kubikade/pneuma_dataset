@@ -1,6 +1,7 @@
 import csv
 import Vehicle
 
+
 def get_number_of_rows(filepath):
     with open(filepath, 'r') as file:
         reader = csv.reader(file, delimiter=";")
