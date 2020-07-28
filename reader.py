@@ -3,6 +3,14 @@ import Vehicle
 
 
 def get_number_of_rows(filepath):
+    """get_number_of_rows.
+
+    Args:
+        filepath: path to a csv file.
+
+    Returns:
+        row_count: number of rows in csv file
+    """
     with open(filepath, 'r') as file:
         reader = csv.reader(file, delimiter=";")
         row_count = sum(1 for row in reader)
@@ -11,6 +19,16 @@ def get_number_of_rows(filepath):
 
 # load first NROWS lines
 def load_multiple_rows(filepath, nrows, granularity=1):
+    """load_multiple_rows.
+
+    Args:
+        filepath: path to a csv file.
+        nrows: number of rows to be loaded
+        granularity: granularity of data, granularity 20 - each 20th data input will be loaded
+
+    Returns:
+       vehicles: list of Vehicle type objects.
+    """
     with open(filepath, 'r') as file:
         reader = csv.reader(file, delimiter=";")
         vehicles = []
@@ -28,6 +46,16 @@ def load_multiple_rows(filepath, nrows, granularity=1):
 
 # load one row on exact index - rowIndex
 def load_one_row(filepath, rowIndex, granularity=1):
+    """load_one_row.
+
+    Args:
+        filepath: path to a csv file.
+        rowIndex: index of row to be loaded
+        granularity: granularity of data, granularity 20 - each 20th data input will be loaded
+
+    Returns:
+       vehicle: Vehicle type object.
+    """
     with open(filepath, 'r') as file:
         reader = csv.reader(file, delimiter=";")
         line = []
@@ -41,6 +69,17 @@ def load_one_row(filepath, rowIndex, granularity=1):
 
 
 def load_rows_in_interval(filepath, fromIndex, toIndex, granularity=1):
+    """load_rows_in_interval.
+
+    Args:
+        filepath: path to a csv file.
+        fromIndex: index of first row to be loaded
+        toIndex: index of last row to be loaded
+        granularity: granularity of data, granularity 20 - each 20th data input will be loaded
+
+    Returns:
+       vehicles: list of Vehicle type objects.
+    """
     with open(filepath, 'r') as file:
         reader = csv.reader(file, delimiter=';')
         for i in range(fromIndex):
@@ -59,6 +98,14 @@ def load_rows_in_interval(filepath, fromIndex, toIndex, granularity=1):
 
 # returns list of first 4 parameters for Vehicle object
 def get_Vehicle_info(line):
+    """get_Vehicle_info.
+
+    Args:
+        line: list of words representing one row in csv file
+
+    Returns:
+        ret: list of first four Vehicle object arguments
+    """
     ret = []
     number_of_info = 4
     for i in range(number_of_info):
@@ -66,7 +113,18 @@ def get_Vehicle_info(line):
     return ret
 
 
-def get_VehData(line, granuality=1):
+# returns lists of data for Vehicle objects
+def get_VehData(line, granularity=1):
+    """get_VehData.
+
+    Args:
+        line: list of words representing one row in csv file
+        granularity: granularity of data, granularity 20 - each 20th data input will be loaded
+
+    Returns:
+        lat_list, lon_list, speed_list, tan_accel_list, lat_accel_list,
+        time_list: lists with data inputs
+    """
     lat_list = []
     lon_list = []
     speed_list = []
@@ -82,7 +140,7 @@ def get_VehData(line, granuality=1):
         tan_accel_list.append(float(line[i+3]))
         lat_accel_list.append(float(line[i+4]))
         time_list.append(float(line[i+5])/1000)
-        i += (number_of_data * granuality)
+        i += (number_of_data * granularity)
     if len(lat_list) == len(lon_list) == len(speed_list) == len(tan_accel_list) == len(lat_accel_list) == len(time_list):
         return lat_list, lon_list, speed_list, tan_accel_list, lat_accel_list, time_list
     else:

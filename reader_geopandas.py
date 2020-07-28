@@ -14,7 +14,6 @@ def gen_df_entry_of_vehicle(veh):
         veh: object of Vehicle type.
 
     Returns:
-        track_id: index for new DataFrame entry
         dict: representation of Vehicle type to be appended into DataFrame
     """
     veh_dict = {DF_COLUMN_NAMES[0]: veh.track_id,
@@ -39,8 +38,8 @@ def create_df(loaded_vehicles):
 
     Returns:
         df: pandas.DataFrame object.
-            rows are indexed with Vehicle.track_id
-            columns represent attributes of Vehicle type (Vehicle.type etc.)
+            rows are indexed with row number
+            columns represent attributes of Vehicle type (one input of Vehicle.type etc. lists)
     """
     row = 1
     df = pd.DataFrame(columns=DF_COLUMN_NAMES)
@@ -52,12 +51,36 @@ def create_df(loaded_vehicles):
 
 
 def to_gdf(df):
+    """to_gdf.
+
+    Args:
+        df: pandas.DataFrame object
+            rows are indexed with row number
+            columns represent attributes of Vehicle type (one input of Vehicle.type etc. lists)
+
+    Returns:
+        gdf: pandas.GeoDataFrame object.
+             rows are indexed with row number
+             columns represent attributes of Vehicle type (one input of Vehicle.type etc. lists)
+             column "geometry" with Point object based on lat and lon of a Vehicle object
+    """
     gdf = geopandas.GeoDataFrame(
         df, geometry=geopandas.points_from_xy(df.lon, df.lat))
     return gdf
 
 
 def load_multiple_rows(filepath, nrows, granularity=1):
+    """load_multiple_rows.
+
+    Args:
+        filepath: path to csv file
+        nrows: number of rows to be loaded
+        granularity: granularity of data, granularity 20 - each 20th data input will be loaded
+
+    Returns:
+        vehicles: list of Vehicle objects.
+                  one object represents one data input of vehicle
+    """
     number_of_data = 6
     with open(filepath, 'r') as file:
         reader = csv.reader(file, delimiter=";")
@@ -86,6 +109,14 @@ def load_multiple_rows(filepath, nrows, granularity=1):
 
 # returns list of first 4 parameters for Vehicle object
 def get_Vehicle_info(line):
+    """get_Vehicle_info.
+
+    Args:
+        line: list of words representing one row in csv file
+
+    Returns:
+        ret: list of first four Vehicle object arguments
+    """
     ret = []
     number_of_info = 4
     for i in range(number_of_info):

@@ -6,6 +6,14 @@ from matplotlib.collections import LineCollection
 
 
 def get_distance_list(vehicle):
+    """get_distance_list.
+
+    Args:
+        vehicle: Vehicle type object
+
+    Returns:
+        distance_list: list of counted distance of vehicle
+        """
     distance_list = []
     for i in range(len(vehicle.lat_list)):
         j = 0
@@ -18,12 +26,30 @@ def get_distance_list(vehicle):
 
 
 def get_segments(time_list, distance_list):
+    """get_segments.
+
+    Args:
+        time_list: list of times of vehicle
+        distance_list: list of distances of vehicle
+
+    Returns:
+        segments: segments of a line for plot
+    """
     points = np.array([time_list, distance_list]).T.reshape(-1, 1, 2)
     segments = np.concatenate([points[:-1], points[1:]], axis=1)
     return segments
 
 
 def find_minimum_maximum(vehicles):
+    """find_minimum_maximum.
+
+    Args:
+        vehicles: list of Vehicle type objects
+
+    Returns:
+        min_dist, max_dist, min_time, max_time, min_speed, max_speed: minimum and maximum
+        of distance/time/speed lists of all vehicles
+    """
     min_dist = min(get_distance_list(vehicles[0]))
     max_dist = max(get_distance_list(vehicles[0]))
     min_time = min(vehicles[0].time_list)
@@ -42,6 +68,13 @@ def find_minimum_maximum(vehicles):
 
 
 def to_plot(vehicles):
+    """to_plot.
+
+    Creates time-distance plot of vehicles.
+
+    Args:
+        vehicles: list of Vehicle type objects
+    """
     min_dist, max_dist, min_time, max_time, min_speed, max_speed = find_minimum_maximum(vehicles)
     fig, ax = plt.subplots()
     norm = plt.Normalize(min_speed, max_speed)
