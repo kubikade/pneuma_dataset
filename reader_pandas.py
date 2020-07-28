@@ -1,5 +1,8 @@
 import pandas as pd
+import geopandas as gpd
+
 import reader
+
 # DataFrame column names, track_id will serve as index, not as column name
 DF_COLUMN_NAMES = ['type', 'traveled_distance', 'avg_speed', 'lat', 'lon', 'speed', 'tan_acc', 'lat_acc', 'time']
 
@@ -45,12 +48,32 @@ def create_df(loaded_vehicles):
     return df
 
 
+def create_gdf_from_one_entry(df_veh):
+    """create_gdf_from_one_entry.
+    Creates GeoDataFrame from one row of DataFrame holding Vehicles.
+
+    Args:
+        df_veh: pandas.Series object, obtained by df.iloc[x]
+
+    Returns:
+        gdf: geopandas.GeoDataFrame containing colums 'time' and 'geometry'.
+    """
+    gdf = gpd.GeoDataFrame(
+            df_veh[DF_COLUMN_NAMES[8]],  # pick columns
+            columns=[DF_COLUMN_NAMES[8]],  # name the columns
+            geometry=gpd.points_from_xy(df_veh.lon, df_veh.lat),
+            crs="EPSG:4326")  # not sure about 'crs' argument
+    return gdf
+
+
 if __name__ == '__main__':
-    filepath = "pneuma_sample_dataset/pneuma_sample_dataset_4_entries.csv"
-    loaded_vehicles = reader.load_multiple_rows(filepath, 1)
+    # filepath = "pneuma_sample_dataset/pneuma_sample_dataset_4_entries.csv"
+    filepath = "pneuma_sample_dataset/pneuma_sample_dataset.csv"
+    loaded_vehicles = reader.load_multiple_rows(filepath, 10)
     df = create_df(loaded_vehicles)
     print(df)
     print(len(df))
+    print('---')
 
     # how to access single entry:
     print('---')
@@ -59,4 +82,7 @@ if __name__ == '__main__':
     # how to access the data of single entry
     print('---')
     print(df.iloc[0]['lon'][1])
+
+    print('---gdf:')
+    gdf = create_gdf_from_one_entry(df.iloc[0])
 
