@@ -1,23 +1,38 @@
+import urllib
+import os
+import numpy as np
+import pandas as pd
+from geopandas import GeoDataFrame, read_file
+from shapely.geometry import Point, LineString, Polygon
+from datetime import datetime, timedelta
+import matplotlib.pyplot as plt
+
+import sys
+sys.path.append("..")
+import movingpandas as mpd
+
+import warnings
+warnings.simplefilter("ignore")
+
 import reader
-import utils
-import plot
-import map
+import reader_pandas
 
-if __name__ == '__main__':
-    filepath = "pneuma_sample_dataset/pneuma_sample_dataset.csv"
-    granularity = 25
+filepath = "pneuma_sample_dataset/pneuma_sample_dataset.csv"
+loaded_vehicles = reader.load_multiple_rows(filepath, 20)
+all = []
+for i in range(20):
+  all.append(i)
 
-    BBoxleft = [37.99130, 37.99163, 23.73236, 23.73326]
-    BBoxright = [37.99083, 37.99102, 23.73559, 23.73694]
-    BBoxdown = [37.99134, 37.99157, 23.72996, 23.73061]
+df = reader_pandas.create_df(loaded_vehicles)
+gdf = reader_pandas.create_gdf(df, all)
 
-    vehicles = reader.load_rows_in_interval(filepath, 390, 450, granularity)
-    ll = utils.pass_through_BBox(vehicles, *BBoxleft)
-    rr = utils.pass_through_BBox(ll, *BBoxright)
-    dep = utils.pass_through_BBox(rr, *BBoxdown)
+gdf['time'] = pd.to_datetime(gdf['time'])
+gdf = gdf.set_index('time')
 
-    for vehicle in dep:
-        print(vehicle)
+MIN_LENGTH = 100 # meters
+traj_collection = mpd.TrajectoryCollection(gdf, 'track_id', min_length=MIN_LENGTH)
+print("Finished creating {} trajectories".format(len(traj_collection)))
 
-    map.to_map_plot(dep, "map.html")
-    plot.to_plot(dep)
+traj_collection.plot()
+
+plt.show()
