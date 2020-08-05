@@ -1,6 +1,5 @@
 import pandas as pd
 import geopandas as gpd
-import reader
 
 # DataFrame column names, track_id will serve as index, not as column name
 DF_COLUMN_NAMES = ['type', 'traveled_distance', 'avg_speed', 'lat', 'lon', 'speed', 'tan_acc', 'lat_acc', 'time', 'track_id']
@@ -70,7 +69,7 @@ def create_gdf(df, veh_ids):
             veh_ids: list of VehicleIDs to select Vehicles for GeoDataFrame
         Returns:
             gdf: geopandas.GeoDataFrame containing colums 'track_id', 'speed', 'time' and 'geometry'.
-        """
+    """
     gdf = create_gdf_from_one_entry(df.iloc[veh_ids[0]])
     for i in range(len(veh_ids)-1):
         gdf = gdf.append(create_gdf_from_one_entry((df.iloc[veh_ids[i+1]])))
