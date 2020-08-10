@@ -2,7 +2,7 @@ import pandas as pd
 import geopandas as gpd
 
 # DataFrame column names, track_id will serve as index, not as column name
-DF_COLUMN_NAMES = ['type', 'traveled_distance', 'avg_speed', 'lat', 'lon', 'speed', 'tan_acc', 'lat_acc', 'time', 'track_id']
+DF_COLUMN_NAMES = ['type', 'traveled_distance', 'avg_speed', 'lat', 'lon', 'speed', 'tan_acc', 'lat_acc', 'time']
 
 
 def gen_df_entry_of_vehicle(veh):
@@ -22,7 +22,6 @@ def gen_df_entry_of_vehicle(veh):
                 DF_COLUMN_NAMES[6]: veh.tan_accel_list,
                 DF_COLUMN_NAMES[7]: veh.lat_accel_list,
                 DF_COLUMN_NAMES[8]: veh.time_list,
-                DF_COLUMN_NAMES[9]: veh.track_id
                 }
     return veh.track_id, veh_dict
 
@@ -52,10 +51,10 @@ def create_gdf_from_one_entry(df_veh):
         gdf: geopandas.GeoDataFrame containing colums 'time' and 'geometry'.
     """
     gdf = gpd.GeoDataFrame(
-            columns=[DF_COLUMN_NAMES[9], DF_COLUMN_NAMES[5], DF_COLUMN_NAMES[8]],  # name the columns
+            columns=['track_id', DF_COLUMN_NAMES[5], DF_COLUMN_NAMES[8]],  # name the columns
             geometry=gpd.points_from_xy(df_veh.lon, df_veh.lat),
             crs="EPSG:4326")  # not sure about 'crs' argument
-    gdf = gdf.assign(track_id=df_veh[DF_COLUMN_NAMES[9]])
+    gdf = gdf.assign(track_id=df_veh.name)
     gdf = gdf.assign(speed=df_veh[DF_COLUMN_NAMES[5]])
     gdf = gdf.assign(time=df_veh[DF_COLUMN_NAMES[8]])
     return gdf
@@ -73,4 +72,6 @@ def create_gdf(df, veh_ids):
     gdf = create_gdf_from_one_entry(df.iloc[veh_ids[0]])
     for i in range(len(veh_ids)-1):
         gdf = gdf.append(create_gdf_from_one_entry((df.iloc[veh_ids[i+1]])))
+    gdf['time'] = pd.to_datetime(gdf['time'])
+    gdf = gdf.set_index('time')
     return gdf
