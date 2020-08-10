@@ -44,3 +44,15 @@ def pass_through_BBox(vehicles, Bxmin, Bxmax, Bymin, Bymax):
                 passing.append(vehicle)
                 break
     return passing
+
+
+def pass_through_Polygon(trajectories, Polygon):
+    intersecting = trajectories.get_intersecting(Polygon)
+    return intersecting
+
+def pass_through_Polygons(trajectories, Polygons):
+    temp = trajectories
+    for Polygon in Polygons:
+        intersecting = temp.get_intersecting(Polygon)
+        temp = intersecting
+    return intersecting
