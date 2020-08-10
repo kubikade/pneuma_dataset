@@ -10,10 +10,9 @@ import reader_pandas
 
 filepath = "../pneuma_sample_dataset/pneuma_sample_dataset.csv"
 loaded_vehicles = reader.load_multiple_rows(filepath, 20)
-all = [i for i in range(20)]
 
 df = reader_pandas.create_df(loaded_vehicles)
-gdf = reader_pandas.create_gdf(df, all)
+gdf = reader_pandas.create_gdf_from_whole_df(df)
 MIN_LENGTH = 100 # meters
 traj_collection = mpd.TrajectoryCollection(gdf, 'track_id', min_length=MIN_LENGTH)
 print("Finished creating {} trajectories".format(len(traj_collection)))
