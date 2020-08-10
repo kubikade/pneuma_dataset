@@ -75,3 +75,19 @@ def create_gdf(df, veh_ids):
     gdf['time'] = pd.to_datetime(gdf['time'])
     gdf = gdf.set_index('time')
     return gdf
+
+
+def create_gdf_from_whole_df(df):
+    """create_gdf_from_whole_df.
+        Creates GeoDataFrame of Vehicles.
+        Args:
+            df: pandas.DataFrame object with all stored data
+        Returns:
+            gdf: geopandas.GeoDataFrame containing colums 'track_id', 'speed', 'time' and 'geometry'.
+        """
+    gdf = create_gdf_from_one_entry(df.iloc[0])
+    for i in range(len(df.index)-1):
+        gdf = gdf.append(create_gdf_from_one_entry(df.iloc[i + 1]))
+    gdf['time'] = pd.to_datetime(gdf['time'])
+    gdf = gdf.set_index('time')
+    return gdf
