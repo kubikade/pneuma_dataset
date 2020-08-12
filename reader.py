@@ -18,7 +18,7 @@ def get_number_of_rows(filepath):
 
 
 # load first NROWS lines
-def load_multiple_rows(filepath, nrows, granularity=1):
+def load_multiple_rows(filepath, nrows, granularity=25):
     """load_multiple_rows.
 
     Args:
@@ -45,7 +45,7 @@ def load_multiple_rows(filepath, nrows, granularity=1):
 
 
 # load one row on exact index - rowIndex
-def load_one_row(filepath, rowIndex, granularity=1):
+def load_one_row(filepath, rowIndex, granularity=25):
     """load_one_row.
 
     Args:
@@ -68,7 +68,7 @@ def load_one_row(filepath, rowIndex, granularity=1):
     return vehicle
 
 
-def load_rows_in_interval(filepath, fromIndex, toIndex, granularity=1):
+def load_rows_in_interval(filepath, fromIndex, toIndex, granularity=25):
     """load_rows_in_interval.
 
     Args:
@@ -114,7 +114,7 @@ def get_Vehicle_info(line):
 
 
 # returns lists of data for Vehicle objects
-def get_VehData(line, granularity=1):
+def get_VehData(line, granularity=25):
     """get_VehData.
 
     Args:
