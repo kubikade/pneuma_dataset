@@ -48,7 +48,7 @@ def create_gdf_from_one_entry(df_veh):
     Args:
         df_veh: pandas.Series object, obtained by df.iloc[x]
     Returns:
-        gdf: geopandas.GeoDataFrame containing colums 'time' and 'geometry'.
+        gdf: geopandas.GeoDataFrame containing columns 'time' and 'geometry'.
     """
     gdf = gpd.GeoDataFrame(
             columns=['track_id', DF_COLUMN_NAMES[5], DF_COLUMN_NAMES[8]],  # name the columns
@@ -67,7 +67,7 @@ def create_gdf(df, veh_ids):
             df: pandas.DataFrame object with all stored data
             veh_ids: list of VehicleIDs to select Vehicles for GeoDataFrame
         Returns:
-            gdf: geopandas.GeoDataFrame containing colums 'track_id', 'speed', 'time' and 'geometry'.
+            gdf: geopandas.GeoDataFrame containing columns 'track_id', 'speed', 'time' and 'geometry'.
     """
     gdf = create_gdf_from_one_entry(df.iloc[veh_ids[0]])
     for i in range(len(veh_ids)-1):
@@ -83,11 +83,67 @@ def create_gdf_from_whole_df(df):
         Args:
             df: pandas.DataFrame object with all stored data
         Returns:
-            gdf: geopandas.GeoDataFrame containing colums 'track_id', 'speed', 'time' and 'geometry'.
-        """
+            gdf: geopandas.GeoDataFrame containing columns 'track_id', 'speed', 'time' and 'geometry'.
+    """
     gdf = create_gdf_from_one_entry(df.iloc[0])
     for i in range(len(df.index)-1):
         gdf = gdf.append(create_gdf_from_one_entry(df.iloc[i + 1]))
+    gdf['time'] = pd.to_datetime(gdf['time'])
+    gdf = gdf.set_index('time')
+    return gdf
+
+
+def list_to_flat_list(list):
+    """list_to_flat_list.
+        Creates flat list with data from lists.
+        Args:
+            list: list of lists with data.
+        Returns:
+            flat: flat list with data.
+    """
+    flat = []
+    for sublist in list:
+        for item in sublist:
+            flat.append(item)
+    return flat
+
+
+def create_lists_for_gdf(df):
+    """create_lists_for_gdf.
+        Creates lists with data for geopandas.GeoDataFrame.
+        Args:
+            df: pandas.DataFrame object with all stored data
+        Returns:
+            flat_track_ids, speeds, times, lats, lons: flat lists with data from df columns.
+    """
+    temp = df[DF_COLUMN_NAMES[5]].tolist()
+    speeds = list_to_flat_list(temp)
+    times = list_to_flat_list(df[DF_COLUMN_NAMES[8]].tolist())
+    lons = list_to_flat_list(df[DF_COLUMN_NAMES[4]].tolist())
+    lats = list_to_flat_list(df[DF_COLUMN_NAMES[3]].tolist())
+    veh_ids = []
+    for i in range(len(df)):
+        veh_ids.append([df.index[i]] * len(temp[i]))
+    flat_track_ids = list_to_flat_list(veh_ids)
+    return flat_track_ids, speeds, times, lats, lons
+
+
+def create_gdf_using_lists(df):
+    """create_gdf_using_lists.
+        Creates geopandas.GeoDataFrame from pandas.DataFrame.
+        Args:
+            df: pandas.DataFrame object with all stored data
+        Returns:
+            gdf: geopandas.GeoDataFrame containing columns 'track_id', 'speed', 'time' and 'geometry'.
+    """
+    track_ids, speeds, times, lats, lons = create_lists_for_gdf(df)
+    gdf = gpd.GeoDataFrame(
+        columns=['track_id', 'speed', 'time'],  # name the columns
+        geometry=gpd.points_from_xy(lons, lats),
+        crs="EPSG:4326")  # not sure about 'crs' argument
+    gdf = gdf.assign(track_id=track_ids)
+    gdf = gdf.assign(speed=speeds)
+    gdf = gdf.assign(time=times)
     gdf['time'] = pd.to_datetime(gdf['time'])
     gdf = gdf.set_index('time')
     return gdf
