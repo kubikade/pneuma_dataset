@@ -51,7 +51,7 @@ def pass_through_bbox(vehicles, bxmin, bxmax, bymin, bymax):
 def veh_depart_from_polygon(vehicles, polygon):
     departing = []
     for vehicle in vehicles:
-        if Point(vehicle.lat_list[0], vehicle.lon_list[0]).within(polygon):
+        if Point(vehicle.lon_list[0], vehicle.lat_list[0]).within(polygon):
             departing.append(vehicle)
     return departing
 
@@ -59,23 +59,23 @@ def veh_depart_from_polygon(vehicles, polygon):
 def veh_pass_through_polygon(vehicles, polygon):
     passing = []
     for vehicle in vehicles:
-        for i in len(vehicle.lat_list):
-            if Point(vehicle.lat_list[i], vehicle.lon_list[i]).within(polygon):
+        for i in range(len(vehicle.lat_list)):
+            if Point(vehicle.lon_list[i], vehicle.lat_list[i]).within(polygon):
                 passing.append(vehicle)
                 break
     return passing
 
 
 def veh_pass_through_polygons(vehicles, polygons):
-    temp = vehicles
-    passing = []
+    passing = vehicles
     for polygon in polygons:
+        temp = passing
+        passing = []
         for vehicle in temp:
-            for i in len(vehicle.lat_list):
-                if Point(vehicle.lat_list[i], vehicle.lon_list[i]).within(polygon):
+            for i in range(len(vehicle.lat_list)):
+                if Point(vehicle.lon_list[i], vehicle.lat_list[i]).within(polygon):
                     passing.append(vehicle)
                     break
-        temp = passing
     return passing
 
 
