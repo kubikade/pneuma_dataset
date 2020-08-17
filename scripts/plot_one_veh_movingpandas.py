@@ -22,7 +22,7 @@ import reader_pandas
 
 def main():
     print("start!")
-    filepath = "pneuma_sample_dataset/pneuma_sample_dataset_4_entries.csv"
+    filepath = "../pneuma_sample_dataset/pneuma_sample_dataset_4_entries.csv"
     loaded_vehicles = reader.load_multiple_rows(filepath, 4)
     df = reader_pandas.create_df(loaded_vehicles)
 
