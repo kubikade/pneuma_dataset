@@ -147,3 +147,26 @@ def create_gdf_using_lists(df):
     gdf['time'] = pd.to_datetime(gdf['time'])
     gdf = gdf.set_index('time')
     return gdf
+
+
+def create_gdf_for_spatial(df):
+    """create_gdf_using_lists.
+        Creates geopandas.GeoDataFrame from pandas.DataFrame.
+        Args:
+            df: pandas.DataFrame object with all stored data
+        Returns:
+            gdf: geopandas.GeoDataFrame containing columns 'track_id', 'speed', 'time' and 'geometry'.
+    """
+    track_ids, speeds, times, lats, lons = create_lists_for_gdf(df)
+    gdf = gpd.GeoDataFrame(
+        columns=['track_id', 'speed', 'time', 'coords'],  # name the columns
+        geometry=gpd.points_from_xy(lons, lats),
+        crs="EPSG:4326")  # not sure about 'crs' argument
+    geopoints = list(zip(lats, lons))
+    gdf = gdf.assign(track_id=track_ids)
+    gdf = gdf.assign(speed=speeds)
+    gdf = gdf.assign(time=times)
+    gdf = gdf.assign(coords=geopoints)
+    gdf['time'] = pd.to_datetime(gdf['time'])
+    gdf = gdf.set_index('time')
+    return gdf
