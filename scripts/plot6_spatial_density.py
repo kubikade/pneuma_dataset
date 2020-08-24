@@ -31,7 +31,7 @@ def density_map(latitudes, longitudes, center, bins=550, radius=0.0033):
 
 
 if __name__ == '__main__':
-    filepath = "pneuma_sample_dataset/pneuma_sample_dataset.csv"
+    filepath = "../pneuma_sample_dataset/pneuma_sample_dataset.csv"
     loaded_vehicles = reader.load_multiple_rows(filepath, 2478)
     df = reader_pandas.create_df(loaded_vehicles)
     gdf = reader_pandas.create_gdf_for_spatial(df)
